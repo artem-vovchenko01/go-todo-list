@@ -11,11 +11,6 @@ import (
 
 var curUserId = 1
 
-// var Users = map[string]string{
-// 	"user1": "password1",
-// 	"user2": "password2",
-// }
-
 func Signin(c *gin.Context) {
 	var user User
 	if err := c.BindJSON(&user); err != nil {

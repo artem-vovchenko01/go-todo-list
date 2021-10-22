@@ -100,7 +100,7 @@ func (memStore *UserStorage) Get(userId int) (User, error) {
 
 
 
-	func (memStore *UserIdStorage) Add(email string, userId int) error {
+func (memStore *UserIdStorage) Add(email string, userId int) error {
 	memStore.lock.RLock()
 	_, ok := memStore.userIds[email]
 	memStore.lock.RUnlock()

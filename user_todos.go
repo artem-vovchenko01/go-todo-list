@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 func CreateToDoList(c *gin.Context) {
@@ -24,21 +23,13 @@ func CreateToDoList(c *gin.Context) {
 }
 
 func UpdateToDoList(c *gin.Context) {
-	_, claims, err := ParseJWT(c)
+	userToDo, err := GetCurrentUserToDo(c)
 	if err != nil {
-		SendError(c, http.StatusBadRequest)
-	}
-	userToDo, err := Storage.GetUserToDoByEmail(claims.Email)
-	if err != nil {
-		SendCustomError(c, http.StatusBadRequest, "there is no todo list for this user")
-	}
-	listIdStr := c.Param("listId")
-	var listId int
-	if listId, err = strconv.Atoi(listIdStr); err != nil {
-		SendCustomError(c, http.StatusBadRequest, "listId parameter invalid")
+		SendCustomError(c, http.StatusBadRequest, "error while retrieving usert todo")
 		return
 	}
-	toDoList, err := userToDo.Get(listId)
+
+	toDoList, err := GetToDoList(c, http.StatusBadRequest)
 	if err != nil {
 		SendCustomError(c, http.StatusBadRequest, "there is no todolist with such id")
 		return
@@ -50,17 +41,12 @@ func UpdateToDoList(c *gin.Context) {
 	newToDoList.currentTaskId = toDoList.currentTaskId
 	newToDoList.Id = toDoList.Id
 	newToDoList.lock = toDoList.lock
-	userToDo.Update(listId, newToDoList)
+	userToDo.Update(toDoList.Id, newToDoList)
 	c.IndentedJSON(204, newToDoList)
 }
 
 func GetToDoLists(c *gin.Context) {
-	_, claims, err := ParseJWT(c)
-	if err != nil {
-		SendError(c, http.StatusBadRequest)
-	}
-
-	userToDo, err := Storage.GetUserToDoByEmail(claims.Email)
+	userToDo, err := GetCurrentUserToDo(c)
 	if err != nil {
 		c.IndentedJSON(200, "{}")
 		return
@@ -70,4 +56,35 @@ func GetToDoLists(c *gin.Context) {
 		listsSlice = append(listsSlice, v)
 	}
 	c.IndentedJSON(200, listsSlice)
+}
+
+func DeleteToDoListHelper(c *gin.Context, listId int) error {
+	_, claims, err := ParseJWT(c)
+	if err != nil {
+		SendError(c, http.StatusBadRequest)
+		return err
+	}
+
+	userToDo, err := Storage.GetUserToDoByEmail(claims.Email)
+	if err != nil {
+		SendError(c, http.StatusBadRequest)
+		return err
+	}
+	userToDo.Delete(listId)
+	return nil
+}
+
+func DeleteToDoList(c *gin.Context) {
+	toDoList, err := GetToDoList(c, 422)
+	if err != nil {
+		SendCustomError(c, 422, "there is no todolist with such id")
+		return
+	}
+
+	for k := range toDoList.tasks {
+		toDoList.Delete(k)
+	}
+
+	DeleteToDoListHelper(c, toDoList.Id)
+	c.Status(204)
 }
