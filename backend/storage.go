@@ -6,8 +6,6 @@ import (
 func NewStorageService() *StorageService {
 	return &StorageService{
 		toDos: NewToDoStorage(),
-		// userToDos: NewUserToDoStorage(),
-		// toDoLists: NewToDoListStorage(),
 		users: NewUserStorage(),
 		userIds: NewUserIdStorage(),
 	}
@@ -15,8 +13,6 @@ func NewStorageService() *StorageService {
 
 type StorageService struct {
 	toDos *ToDo
-	// userToDos *UserToDo
-	// toDoLists *ToDoList
 	users *UserStorage
 	userIds *UserIdStorage
 }
