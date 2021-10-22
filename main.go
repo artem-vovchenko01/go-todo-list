@@ -6,27 +6,52 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var Storage StorageService = *NewStorageService()
+
 func main() {
 	router := gin.Default()
 
-	router.GET("/tasks", getTasks)
+	router.POST("/user/signin", Signin)
+	router.POST("/user/signup", Signup)
+
+	userRoutes := router.Group("/user", AuthorizeJWT()) 
+	{
+		// userRoutes.GET("/tasks", GetTasks)
+		// userRoutes.GET("/tasks/:id", GetTaskById)
+		userRoutes.GET("/welcome", Welcome)
+		userRoutes.GET("/jwt/refresh", Refresh)
+
+		// userRoutes.POST("/tasks", PostTasks)
+	}
+
+	todoRoutes := router.Group("/todo", AuthorizeJWT()) 
+	{
+		todoRoutes.POST("/lists", CreateToDoList)
+		todoRoutes.PUT("/list/:listId", UpdateToDoList)
+		todoRoutes.GET("/lists", GetToDoLists)
+
+		todoRoutes.POST("/lists/:listId/tasks", CreateTask)
+	}
 
 	router.Run("localhost:8080")
 }
 
-// album represents data about a record album.
-type Task struct {
-    Id     string  `json:"id"`
-    Name  string  `json:"name"`
-    Description string  `json:"description"`
-    Status  float64 `json:"status"`
+func Welcome(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, gin.H {"message" : "welcome"})
 }
 
-var tasks = []Task {
-	{Id: "10", Name: "Test task", Description: "My cool task", Status: 0},
-	{Id: "20", Name: "Other task", Description: "My othercool task", Status: 1},
+func SendResponse(c *gin.Context, status int, resp string) {
+	// c.IndentedJSON(status, gin.H { "message" : httpStatusMessages[status] })
+	c.Writer.Write([]byte(resp))
+	c.Status(status)
 }
 
-func getTasks(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, tasks)
+// func SendResponseJSON(c *gin.Context, status int, gin.H)
+
+func SendError(c *gin.Context, status int) {
+	c.IndentedJSON(status, gin.H { "message" : httpStatusMessages[status] })
+}
+
+func SendCustomError(c *gin.Context, status int, message string) {
+	c.IndentedJSON(status, gin.H { "message" : message })
 }
