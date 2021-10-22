@@ -9,7 +9,7 @@ import (
 func CreateTask(c *gin.Context) {
 	toDoList, err := GetToDoList(c, 422)
 	if err != nil {
-		SendCustomError(c, 422, "there is no todolist with such id")
+		SendCustomError(c, 422, errNoToDoListWithSuchId)
 		return
 	}
 
@@ -22,7 +22,7 @@ func CreateTask(c *gin.Context) {
 func GetTasks(c *gin.Context) {
 	toDoList, err := GetToDoList(c, 422)
 	if err != nil {
-		SendCustomError(c, 422, "there is no todolist with such id")
+		SendCustomError(c, 422, errNoToDoListWithSuchId)
 		return
 	}
 
@@ -36,17 +36,17 @@ func GetTasks(c *gin.Context) {
 func DeleteTask(c *gin.Context) {
 	toDoList, err := GetToDoList(c, 422)
 	if err != nil {
-		SendCustomError(c, 422, "there is no todolist with such id")
+		SendCustomError(c, 422, errNoToDoListWithSuchId)
 		return
 	}
 	taskId, err := GetTaskId(c)
 	if err != nil {
-		SendCustomError(c, 401, "taskId parameter invalid")
+		SendCustomError(c, 401, errTaskIdParamInvalid)
 		return
 	}
 	_, err = toDoList.Delete(taskId)
 	if err != nil {
-		SendCustomError(c, http.StatusBadRequest, "there is no task with such id")
+		SendCustomError(c, http.StatusBadRequest, errNoTaskWithSuchId)
 		return
 	}
 	c.Status(204)
@@ -55,18 +55,18 @@ func DeleteTask(c *gin.Context) {
 func UpdateTask(c *gin.Context) {
 	toDoList, err := GetToDoList(c, 422)
 	if err != nil {
-		SendCustomError(c, 422, "there is no todolist with such id")
+		SendCustomError(c, 422, errNoToDoListWithSuchId)
 		return
 	}
 	task, err := GetTask(c, 422)
 	if err != nil {
-		SendCustomError(c, 401, "cannot retrieve task")
+		SendCustomError(c, 401, errCannotRetrieveTask)
 		return
 	}
 
 	newTask := &Task {}
 	if err := c.BindJSON(newTask); err != nil {
-		SendCustomError(c, 401, "task format invalid")
+		SendCustomError(c, 401, errTaskFormatInvalid)
 		return
 	}
 	newTask.Id = task.Id

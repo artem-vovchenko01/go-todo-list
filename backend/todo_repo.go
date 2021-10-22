@@ -5,9 +5,6 @@ import (
 	"errors"
 )
 
-const alreadyExistsUserToDoErr = "UserToDo for such user already exist"
-const userToDoDoesntExistErr = "UserToDo for such user doesn't yet exist"
-
 type ToDo struct {
 	lock *sync.RWMutex
 	todos map[int]*UserToDo
@@ -25,7 +22,7 @@ func (memStore *ToDo) Add(userId int, userToDo *UserToDo) error {
 	_, ok := memStore.todos[userId]
 	memStore.lock.RUnlock()
 	if ok {
-		return errors.New(alreadyExistsUserToDoErr)
+		return errors.New(errAlreadyExistsUserToDo)
 	}
 	memStore.lock.Lock()
 	memStore.todos[userId] = userToDo
@@ -38,7 +35,7 @@ func (memStore *ToDo) Update(userId int, userToDo *UserToDo) error {
 	_, ok := memStore.todos[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return errors.New(userToDoDoesntExistErr)
+		return errors.New(errUserToDoDoesntExist)
 	}
 
 	memStore.lock.Lock()
@@ -52,7 +49,7 @@ func (memStore *ToDo) Delete(userId int) (*UserToDo, error) {
 	userToDo, ok := memStore.todos[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return &UserToDo{}, errors.New(userToDoDoesntExistErr)
+		return &UserToDo{}, errors.New(errUserToDoDoesntExist)
 	}
 
 	delete(memStore.todos, userId)
@@ -64,7 +61,7 @@ func (memStore *ToDo) Get(userId int) (*UserToDo, error) {
 	userToDo, ok := memStore.todos[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return &UserToDo{}, errors.New(userToDoDoesntExistErr)
+		return &UserToDo{}, errors.New(errUserToDoDoesntExist)
 	}
 
 	return userToDo, nil

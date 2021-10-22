@@ -1,8 +1,5 @@
 package main
 
-import (
-)
-
 func NewStorageService() *StorageService {
 	return &StorageService{
 		toDos: NewToDoStorage(),

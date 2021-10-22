@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-const alreadyUserExistsErr = "Task by such ID already exist"
-const userDoesntExistErr = "There is no task by such ID"
+const errAlreadyUserExists = "Task by such ID already exist"
+const errUserDoesntExist = "There is no task by such ID"
 
 type User struct {
 	id int 
@@ -48,7 +48,7 @@ func (memStore *UserStorage) Add(user User) error {
 	_, ok := memStore.users[memStore.currentId]
 	memStore.lock.RUnlock()
 	if ok {
-		return errors.New(alreadyTaskExistsErr)
+		return errors.New(errAlreadyTaskExists)
 	}
 	user.id = memStore.currentId
 	memStore.lock.Lock()
@@ -64,7 +64,7 @@ func (memStore *UserStorage) Update(userId int, user User) error {
 	_, ok := memStore.users[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return errors.New(taskDoesntExistErr)
+		return errors.New(errTaskDoesntExist)
 	}
 
 	memStore.lock.Lock()
@@ -78,7 +78,7 @@ func (memStore *UserStorage) Delete(userId int) (User, error) {
 	user, ok := memStore.users[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return User{}, errors.New(taskDoesntExistErr)
+		return User{}, errors.New(errTaskDoesntExist)
 	}
 
 	delete(memStore.users, userId)
@@ -90,7 +90,7 @@ func (memStore *UserStorage) Get(userId int) (User, error) {
 	task, ok := memStore.users[userId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return User{}, errors.New(taskDoesntExistErr)
+		return User{}, errors.New(errTaskDoesntExist)
 	}
 
 	return task, nil
@@ -105,7 +105,7 @@ func (memStore *UserIdStorage) Add(email string, userId int) error {
 	_, ok := memStore.userIds[email]
 	memStore.lock.RUnlock()
 	if ok {
-		return errors.New(alreadyTaskExistsErr)
+		return errors.New(errAlreadyTaskExists)
 	}
 	memStore.lock.Lock()
 	memStore.userIds[email] = userId
@@ -118,7 +118,7 @@ func (memStore *UserIdStorage) Update(email string, userId int) error {
 	_, ok := memStore.userIds[email]
 	memStore.lock.RUnlock()
 	if !ok {
-		return errors.New(taskDoesntExistErr)
+		return errors.New(errTaskDoesntExist)
 	}
 
 	memStore.lock.Lock()
@@ -132,7 +132,7 @@ func (memStore *UserIdStorage) Delete(email string) (int, error) {
 	userId, ok := memStore.userIds[email]
 	memStore.lock.RUnlock()
 	if !ok {
-		return -1, errors.New(taskDoesntExistErr)
+		return -1, errors.New(errTaskDoesntExist)
 	}
 
 	delete(memStore.userIds, email)
@@ -144,7 +144,7 @@ func (memStore *UserIdStorage) Get(email string) (int, error) {
 	userId, ok := memStore.userIds[email]
 	memStore.lock.RUnlock()
 	if !ok {
-		return -1, errors.New(taskDoesntExistErr)
+		return -1, errors.New(errTaskDoesntExist)
 	}
 
 	return userId, nil

@@ -5,9 +5,6 @@ import (
 	"sync"
 )
 
-const alreadyTaskExistsErr = "Task by such ID already exist"
-const taskDoesntExistErr = "There is no task by such ID"
-
 type ToDoList struct {
 	currentTaskId int
 	lock *sync.RWMutex
@@ -29,7 +26,7 @@ func (memStore *ToDoList) Add(task *Task) error {
 	_, ok := memStore.tasks[memStore.currentTaskId]
 	memStore.lock.RUnlock()
 	if ok {
-		return errors.New(alreadyTaskExistsErr)
+		return errors.New(errAlreadyTaskExists)
 	}
 	memStore.lock.Lock()
 	task.Id = memStore.currentTaskId
@@ -45,7 +42,7 @@ func (memStore *ToDoList) Update(taskId int, task *Task) error {
 	_, ok := memStore.tasks[taskId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return errors.New(taskDoesntExistErr)
+		return errors.New(errTaskDoesntExist)
 	}
 
 	memStore.lock.Lock()
@@ -59,7 +56,7 @@ func (memStore *ToDoList) Delete(taskId int) (*Task, error) {
 	task, ok := memStore.tasks[taskId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return &Task{}, errors.New(taskDoesntExistErr)
+		return &Task{}, errors.New(errTaskDoesntExist)
 	}
 
 	delete(memStore.tasks, taskId)
@@ -71,7 +68,7 @@ func (memStore *ToDoList) Get(taskId int) (*Task, error) {
 	task, ok := memStore.tasks[taskId]
 	memStore.lock.RUnlock()
 	if !ok {
-		return &Task{}, errors.New(taskDoesntExistErr)
+		return &Task{}, errors.New(errTaskDoesntExist)
 	}
 
 	return task, nil

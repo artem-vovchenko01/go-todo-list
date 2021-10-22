@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const BEARER_SCHEMA = "Bearer "
-const JWT_EXPIRATION_TIME = 1
+const bearerSchema = "Bearer "
+const jwtExpirationTime = 30
 var httpStatusMessages = map[int]string {
 	http.StatusUnauthorized : "unauthorized",
 	http.StatusBadRequest : "bad request",
@@ -36,12 +36,12 @@ func AuthorizeJWT() gin.HandlerFunc {
 func ParseJWT(c *gin.Context) (*jwt.Token, *Claims, error) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			return nil, nil, errors.New("no authentication header")
+			return nil, nil, errors.New(errNoAuthHeader)
 		}
-		if len(authHeader) <= len(BEARER_SCHEMA) {
-			return nil, nil, errors.New("flawed Authorization header")
+		if len(authHeader) <= len(bearerSchema) {
+			return nil, nil, errors.New(errBadAuthHeader)
 		}
-		tknStr := authHeader[len(BEARER_SCHEMA):]
+		tknStr := authHeader[len(bearerSchema):]
 		claims := &Claims{}
 		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
 			return JwtKey, nil
@@ -50,7 +50,7 @@ func ParseJWT(c *gin.Context) (*jwt.Token, *Claims, error) {
 }
 
 func CreateJWT(user User) (string, error) {
-	expirationTime := time.Now().Add(JWT_EXPIRATION_TIME * time.Minute)
+	expirationTime := time.Now().Add(jwtExpirationTime * time.Minute)
 	
 	claims := &Claims{
 		Email: user.Email,
@@ -64,7 +64,7 @@ func CreateJWT(user User) (string, error) {
 }
 
 func GetRefreshedJWT(claims *Claims) (string, error) {
-	expirationTime := time.Now().Add(JWT_EXPIRATION_TIME * time.Minute)
+	expirationTime := time.Now().Add(jwtExpirationTime * time.Minute)
 	claims.ExpiresAt = expirationTime.Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(JwtKey)

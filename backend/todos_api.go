@@ -77,7 +77,7 @@ func DeleteToDoListHelper(c *gin.Context, listId int) error {
 func DeleteToDoList(c *gin.Context) {
 	toDoList, err := GetToDoList(c, 422)
 	if err != nil {
-		SendCustomError(c, 422, "there is no todolist with such id")
+		SendCustomError(c, 422, errNoToDoListWithSuchId)
 		return
 	}
 

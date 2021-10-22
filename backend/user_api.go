@@ -36,7 +36,7 @@ func Signin(c *gin.Context) {
 	tokenString, err := CreateJWT(user)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : "error while creating JWT"})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : errWhileJWTCreate})
 		return
 	}
 
@@ -50,11 +50,11 @@ func Signup(c *gin.Context) {
 	}
 
 	if _, err := Storage.userIds.Get(user.Email); err == nil {
-		SendCustomError(c, http.StatusBadRequest, "user with such email already exists")
+		SendCustomError(c, http.StatusBadRequest, errEmailOccupied)
 			return
 	}
 		Storage.users.Add(user)
-		SendResponse(c, 201, "registered")
+		SendResponse(c, 201, registeredMesg)
 	}
 
 func Refresh(c *gin.Context) {
@@ -77,10 +77,9 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
-	// Now, create a new token for the current use, with a renewed expiration time
 	newTkn, err := GetRefreshedJWT(claims)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : "internal server error"})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : errWhileJWTRefresh})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, gin.H {"token" : newTkn })
