@@ -65,12 +65,14 @@ func UpdateTask(c *gin.Context) {
 	}
 
 	newTask := &Task {}
+	newTask.Status = task.Status
+	newTask.Description = task.Description
+	newTask.Name = task.Name
 	if err := c.BindJSON(newTask); err != nil {
 		SendCustomError(c, 401, errTaskFormatInvalid)
 		return
 	}
 	newTask.Id = task.Id
-	newTask.Status = task.Status
 	toDoList.Update(task.Id, newTask)
 	c.IndentedJSON(200, newTask)
 }
