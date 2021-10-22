@@ -11,7 +11,9 @@ Application will be listening on localhost:8080
 
 API routes are listed in main.go 
 
-Example of signin in:
+Example of signin up and getting JWT token
+
+To signup:
 
 ```console
 foo@bar:~$ curl -X POST localhost:8080/user/signup --data '{ "email" : "test@mail.com", "password" : "12345678" } '
