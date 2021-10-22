@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"fmt"
 )
 
 func CreateToDoList(c *gin.Context) {
@@ -14,7 +13,7 @@ func CreateToDoList(c *gin.Context) {
 	}
 	userToDo, err := Storage.GetOrCreateUserToDoByEmail(claims.Email)
 	if err != nil {
-		SendCustomError(c, http.StatusBadRequest, "")
+		SendCustomError(c, http.StatusBadRequest, "unexpected server error")
 	}
 
 	toDoList := NewToDoListStorage()
@@ -70,7 +69,5 @@ func GetToDoLists(c *gin.Context) {
 	for _, v := range userToDo.lists {
 		listsSlice = append(listsSlice, v)
 	}
-	fmt.Println(userToDo)
-	fmt.Println(listsSlice)
 	c.IndentedJSON(200, listsSlice)
 }

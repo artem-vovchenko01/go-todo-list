@@ -27,10 +27,11 @@ func main() {
 	todoRoutes := router.Group("/todo", AuthorizeJWT()) 
 	{
 		todoRoutes.POST("/lists", CreateToDoList)
-		todoRoutes.PUT("/list/:listId", UpdateToDoList)
+		todoRoutes.PUT("/lists/:listId", UpdateToDoList)
 		todoRoutes.GET("/lists", GetToDoLists)
 
 		todoRoutes.POST("/lists/:listId/tasks", CreateTask)
+		todoRoutes.GET("/lists/:listId/tasks", GetTasks)
 	}
 
 	router.Run("localhost:8080")
