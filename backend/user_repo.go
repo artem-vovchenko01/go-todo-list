@@ -2,41 +2,41 @@ package main
 
 import (
 	"errors"
-	"sync"
 	"fmt"
+	"sync"
 )
 
 const errAlreadyUserExists = "Task by such ID already exist"
 const errUserDoesntExist = "There is no task by such ID"
 
 type User struct {
-	id int 
-	Email string `json:"email"`
+	id       int
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type UserStorage struct {
 	currentId int
-	lock *sync.RWMutex
-	users map[int]User
+	lock      *sync.RWMutex
+	users     map[int]User
 }
 
 type UserIdStorage struct {
-	lock sync.RWMutex
+	lock    sync.RWMutex
 	userIds map[string]int
 }
 
 func NewUserStorage() *UserStorage {
 	return &UserStorage{
 		currentId: 1,
-		lock: &sync.RWMutex{},
-		users: make(map[int]User),
+		lock:      &sync.RWMutex{},
+		users:     make(map[int]User),
 	}
 }
 
 func NewUserIdStorage() *UserIdStorage {
 	return &UserIdStorage{
-		lock: sync.RWMutex{},
+		lock:    sync.RWMutex{},
 		userIds: make(map[string]int),
 	}
 }
@@ -95,10 +95,6 @@ func (memStore *UserStorage) Get(userId int) (User, error) {
 
 	return task, nil
 }
-
-
-
-
 
 func (memStore *UserIdStorage) Add(email string, userId int) error {
 	memStore.lock.RLock()

@@ -1,18 +1,18 @@
 package main
 
 import (
-	"sync"
 	"errors"
+	"sync"
 )
 
 type ToDo struct {
-	lock *sync.RWMutex
+	lock  *sync.RWMutex
 	todos map[int]*UserToDo
 }
 
 func NewToDoStorage() *ToDo {
 	return &ToDo{
-		lock: &sync.RWMutex{},
+		lock:  &sync.RWMutex{},
 		todos: make(map[int]*UserToDo),
 	}
 }

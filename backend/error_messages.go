@@ -21,4 +21,3 @@ const errTaskDoesntExist = "There is no task by such ID"
 
 const errAlreadyExistsUserToDo = "UserToDo for such user already exist"
 const errUserToDoDoesntExist = "UserToDo for such user doesn't yet exist"
-

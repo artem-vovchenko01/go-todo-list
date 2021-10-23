@@ -10,15 +10,15 @@ const toDoListDoesntExistErr = "There is no ToDoList by such ID"
 
 type UserToDo struct {
 	currentId int
-	lock  *sync.RWMutex
-	lists map[int]*ToDoList
+	lock      *sync.RWMutex
+	lists     map[int]*ToDoList
 }
 
 func NewUserToDoStorage() *UserToDo {
 	return &UserToDo{
 		currentId: 1,
-		lock:  &sync.RWMutex{},
-		lists: make(map[int]*ToDoList),
+		lock:      &sync.RWMutex{},
+		lists:     make(map[int]*ToDoList),
 	}
 }
 

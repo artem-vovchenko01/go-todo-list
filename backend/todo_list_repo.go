@@ -7,17 +7,17 @@ import (
 
 type ToDoList struct {
 	currentTaskId int
-	lock *sync.RWMutex
-	Name string `json:"name"`
-	Id int `json:"id"`
-	tasks map[int]*Task
+	lock          *sync.RWMutex
+	Name          string `json:"name"`
+	Id            int    `json:"id"`
+	tasks         map[int]*Task
 }
 
 func NewToDoListStorage() *ToDoList {
 	return &ToDoList{
 		currentTaskId: 1,
-		lock:  &sync.RWMutex{},
-		tasks: make(map[int]*Task),
+		lock:          &sync.RWMutex{},
+		tasks:         make(map[int]*Task),
 	}
 }
 

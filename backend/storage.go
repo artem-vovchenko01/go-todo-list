@@ -2,22 +2,22 @@ package main
 
 func NewStorageService() *StorageService {
 	return &StorageService{
-		toDos: NewToDoStorage(),
-		users: NewUserStorage(),
+		toDos:   NewToDoStorage(),
+		users:   NewUserStorage(),
 		userIds: NewUserIdStorage(),
 	}
 }
 
 type StorageService struct {
-	toDos *ToDo
-	users *UserStorage
+	toDos   *ToDo
+	users   *UserStorage
 	userIds *UserIdStorage
 }
 
 func (s *StorageService) GetUserToDoByEmail(email string) (*UserToDo, error) {
 	userId, err := Storage.userIds.Get(email)
 	if err != nil {
-		return &UserToDo{}, err	
+		return &UserToDo{}, err
 	}
 	lists, err := Storage.toDos.Get(userId)
 	if err != nil {
@@ -29,7 +29,7 @@ func (s *StorageService) GetUserToDoByEmail(email string) (*UserToDo, error) {
 func (s *StorageService) GetOrCreateUserToDoByEmail(email string) (*UserToDo, error) {
 	userId, err := Storage.userIds.Get(email)
 	if err != nil {
-		return &UserToDo{}, err	
+		return &UserToDo{}, err
 	}
 	lists, err := Storage.toDos.Get(userId)
 	if err != nil {

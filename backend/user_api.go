@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
-	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -36,7 +36,7 @@ func Signin(c *gin.Context) {
 	tokenString, err := CreateJWT(user)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : errWhileJWTCreate})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": errWhileJWTCreate})
 		return
 	}
 
@@ -51,11 +51,11 @@ func Signup(c *gin.Context) {
 
 	if _, err := Storage.userIds.Get(user.Email); err == nil {
 		SendCustomError(c, http.StatusBadRequest, errEmailOccupied)
-			return
+		return
 	}
-		Storage.users.Add(user)
-		SendResponse(c, 201, registeredMesg)
-	}
+	Storage.users.Add(user)
+	SendResponse(c, 201, registeredMesg)
+}
 
 func Refresh(c *gin.Context) {
 	tkn, claims, err := ParseJWT(c)
@@ -79,8 +79,8 @@ func Refresh(c *gin.Context) {
 
 	newTkn, err := GetRefreshedJWT(claims)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H {"message" : errWhileJWTRefresh})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": errWhileJWTRefresh})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, gin.H {"token" : newTkn })
+	c.IndentedJSON(http.StatusOK, gin.H{"token": newTkn})
 }

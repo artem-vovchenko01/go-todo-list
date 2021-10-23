@@ -64,7 +64,7 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	newTask := &Task {}
+	newTask := &Task{}
 	newTask.Status = task.Status
 	newTask.Description = task.Description
 	newTask.Name = task.Name

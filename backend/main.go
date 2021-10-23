@@ -12,12 +12,12 @@ func main() {
 	router.POST("/user/signin", Signin)
 	router.POST("/user/signup", Signup)
 
-	userRoutes := router.Group("/user", AuthorizeJWT()) 
+	userRoutes := router.Group("/user", AuthorizeJWT())
 	{
 		userRoutes.GET("/jwt/refresh", Refresh)
 	}
 
-	todoRoutes := router.Group("/todo", AuthorizeJWT()) 
+	todoRoutes := router.Group("/todo", AuthorizeJWT())
 	{
 		todoRoutes.GET("/lists", GetToDoLists)
 		todoRoutes.POST("/lists", CreateToDoList)
@@ -39,9 +39,9 @@ func SendResponse(c *gin.Context, status int, resp string) {
 }
 
 func SendError(c *gin.Context, status int) {
-	c.IndentedJSON(status, gin.H { "message" : httpStatusMessages[status] })
+	c.IndentedJSON(status, gin.H{"message": httpStatusMessages[status]})
 }
 
 func SendCustomError(c *gin.Context, status int, message string) {
-	c.IndentedJSON(status, gin.H { "message" : message })
+	c.IndentedJSON(status, gin.H{"message": message})
 }
